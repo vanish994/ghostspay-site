@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Pagamento GhostsPay</title>
+</head>
+<body>
+  <h2>Pagamento</h2>
+  <form id="payForm">
+    <input name="name" placeholder="Nome" required />
+    <input name="email" placeholder="Email" required />
+    <input name="amount" placeholder="Valor (R$)" required type="number" />
+    <button type="submit">Pagar</button>
+  </form>
 
+  <script>
+    document.getElementById('payForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const res = await fetch('/api/purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: parseInt(f.amount.value),
+          description: "Compra no site",
+          customer: {
+            name: f.name.value,
+            email: f.email.value
+          }
+        })
+      });
+      const data = await res.json();
+      alert("Pagamento criado!");
+      console.log(data);
+    };
+  </script>
+</body>
+</html>

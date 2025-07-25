@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin GhostsPay</title>
+</head>
+<body>
+  <h2>Painel Admin</h2>
+  <div>Saldo: <span id="saldo">Carregando...</span></div>
+
+  <h3>Sacar via PIX</h3>
+  <form id="withdrawForm">
+    <input name="receiver_id" placeholder="ID da conta bancária" required />
+    <input name="amount" placeholder="Valor em centavos" type="number" required />
+    <button type="submit">Sacar</button>
+  </form>
+
+  <script>
+    async function carregarSaldo() {
+      const res = await fetch('/api/balance');
+      const data = await res.json();
+      document.getElementById('saldo').innerText = `R$ ${(data.balance / 100).toFixed(2)}`;
+    }
+
+    document.getElementById('withdrawForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const res = await fetch('/api/withdraw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          receiver_id: f.receiver_id.value,
+          amount: parseInt(f.amount.value)
+        })
+      });
+      const data = await res.json();
+      alert('Saque solicitado!');
+    };
+
+    carregarSaldo();
+  </script>
+</body>
+</html>
